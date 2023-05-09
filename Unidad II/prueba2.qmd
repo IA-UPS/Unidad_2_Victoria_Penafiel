@@ -107,10 +107,6 @@ Así por ejemplo la normalización min-max es la mejor, puesto que no tenemos ou
 Otra forma de ver la transfomración es mediante gráficos de densidad
 
 ```{r}
-
-```
-
-```{r}
 for(l in 1:length(datos.melt)){
   
   X <- datos.melt[[l]]
@@ -163,33 +159,34 @@ https://rpubs.com/jkylearmstrong/logit_w\_caret
 alpha=1 es lasso y 0 es ridge
 
 ```{r}
-set.seed(123456789)
+#cv es metodo de control
+set.seed(123456789) #Se necesita una semilla
 trControl <- trainControl(method = 'cv',
-                          number = 10)
+                          number = 5)
 myfnlog <- function(x) train(clase ~ ., data = x, method = "multinom", trControl = trControl, trace = F)
-
+#multinom se pone para varios datos
 logistica.lista <- lapply(datos.train.lista,myfnlog)
-
+#Se aplica a los datos de entrenamiento
 logisita.pred <- vector("list",length = length(datos.lista))
-
+#Se crea un vector del tamaño del vector lista
 for(l in 1:length(datos.lista)){
   
   logisita.pred[[l]] <- predict(logistica.lista[[l]],datos.test.lista[[l]])
   
   
 }
-
+#Se llena el for desde el primer valor hasta el numero total de los datos lista
 names(logisita.pred) <- names(datos.lista)
-accuracy <- vector("numeric",length = length(datos.lista))
+accuracy.regresion <- vector("numeric",length = length(datos.lista))
 
 for(l in 1:length(datos.lista)){
   
-  accuracy[l] <- confusionMatrix(datos.test.lista$raw$clase,logisita.pred[[l]])$overall[1]
+  accuracy.regresion[l] <- confusionMatrix(datos.test.lista$raw$clase,logisita.pred[[l]])$overall[1]
   
   
 }
 
-names(accuracy) <- names(datos.lista)
+names(accuracy.regresion) <- names(datos.lista)
 
 ### Este valor lo tienen que guardar solamente haremos por accuracy y kappa
 ### tenemos que mirar el objeto matconf
@@ -206,6 +203,42 @@ datos.test.lista <- lapply(datos.lista, function(x) x[-idx,])
 
 cvfit_lasso <- cv.glmnet(as.matrix(datos.train.lista$raw[,-ncol(datos)]),as.numeric(datos.train.lista$raw$clase),type.measure = "class",family="multinom", alpha = 0,nfolds = 4)
 
+print(accuracy)
 
+```
 
+Aquí
+
+```{r}
+
+```
+
+```{r}
+modelo = RidgeCV(
+            alphas          = np.logspace(-10, 2, 200),
+            fit_intercept   = True,
+            normalize       = True,
+            store_cv_values = True
+         )
+
+_ = modelo.fit(X = X_train, y = y_train)
+```
+
+```{r warning=F}
+alphas = modelo.alphas
+coefs = []
+
+for alpha in alphas:
+    modelo_temp = Ridge(alpha=alpha, fit_intercept=False, normalize=True)
+    modelo_temp.fit(X_train, y_train)
+    coefs.append(modelo_temp.coef_.flatten())
+
+fig, ax = plt.subplots(figsize=(7, 3.84))
+ax.plot(alphas, coefs)
+ax.set_xscale('log')
+ax.set_xlabel('alpha')
+ax.set_ylabel('coeficientes')
+ax.set_title('Coeficientes del modelo en función de la regularización');
+plt.axis('tight')
+plt.show()
 ```
