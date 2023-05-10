@@ -193,55 +193,36 @@ names(accuracy.regresion) <- names(datos.lista)
 
 ```
 
-```{r warning=F}
-set.seed(123456789)
-
-### para conjunto de datos podemos realizar el split
-### lasso 1 ridge 0
-datos.train.lista <- lapply(datos.lista, function(x) x[idx,])
-datos.test.lista <- lapply(datos.lista, function(x) x[-idx,])
-
-cvfit_lasso <- cv.glmnet(as.matrix(datos.train.lista$raw[,-ncol(datos)]),as.numeric(datos.train.lista$raw$clase),type.measure = "class",family="multinom", alpha = 0,nfolds = 4)
-
-print(accuracy.regresion)
-
-```
-
 ###Ridge
 
-```{r}
-set.seed(123456789)
-n  <- nrow(datos)
-idx <- sample(1:n,n*0.7)
-### para conjunto de datos podemos realizar el split
-datos.train.lista <- lapply(datos.lista, function(x) x[idx,])
-datos.test.lista <- lapply(datos.lista, function(x) x[-idx,])
-```
-
-```{r}
+```{r warning=FALSE}
 #cv es metodo de control
+library(glmnet)
 set.seed(123456789) #Se necesita una semilla
 trControl <- trainControl(method = 'cv',
                           number = 5)
-myfnlog <- function(x) train(clase ~ ., data = x, method = "glmnet", trControl = trControl, trace = F)
-#multinom se pone para varios datos
-logistica.lista <- lapply(datos.train.lista,myfnlog)
+#entrenamiento de ridge
+myfnridge <- function(x) train(clase ~ ., data = x, method = "glmnet", trControl = trControl, tuneGrid=expand.grid(alpha=0, lambda=seq(0,1,by=0.001)), trace = F)
+#bucle de lista
+
+ridge.lista <- lapply(datos.train.lista,myfnridge)
 #Se aplica a los datos de entrenamiento
-logisita.pred <- vector("list",length = length(datos.lista))
-#Se crea un vector del tamaño del vector lista
+
+ridge.pred <- vector("list",length = length(datos.lista))
+#Se crea un vector del tamaño del vector lista de ridge
 for(l in 1:length(datos.lista)){
   
-  logisita.pred[[l]] <- predict(logistica.lista[[l]],datos.test.lista[[l]])
+  ridge.pred[[l]] <- predict(ridge.lista[[l]],datos.test.lista[[l]])
   
   
 }
 #Se llena el for desde el primer valor hasta el numero total de los datos lista
-names(logisita.pred) <- names(datos.lista)
+names(ridge.pred) <- names(datos.lista)
 accuracy.ridge <- vector("numeric",length = length(datos.lista))
 
 for(l in 1:length(datos.lista)){
   
-  accuracy.ridge[l] <- confusionMatrix(datos.test.lista$raw$clase,logisita.pred[[l]])$overall[1]
+  accuracy.ridge[l] <- confusionMatrix(datos.test.lista$raw$clase,ridge.pred[[l]])$overall[1]
   
   
 }
@@ -267,59 +248,38 @@ print(accuracy.ridge)
 ```
 
 ###Lasso
-```{r}
-set.seed(123456789)
-n  <- nrow(datos)
-idx <- sample(1:n,n*0.7)
-### para conjunto de datos podemos realizar el split
-datos.train.lista <- lapply(datos.lista, function(x) x[idx,])
-datos.test.lista <- lapply(datos.lista, function(x) x[-idx,])
-```
-
-```{r}
+```{r warning=False}
 #cv es metodo de control
+library(glmnet)
 set.seed(123456789) #Se necesita una semilla
 trControl <- trainControl(method = 'cv',
                           number = 5)
-myfnlog <- function(x) train(clase ~ ., data = x, method = "glmnet", trControl = trControl, trace = F)
-#multinom se pone para varios datos
-logistica.lista <- lapply(datos.train.lista,myfnlog)
+#entrenamiento de ridge
+myfnlasso <- function(x) train(clase ~ ., data = x, method = "glmnet", trControl = trControl, tuneGrid=expand.grid(alpha=1, lambda=seq(0,1,by=0.001)), trace = F)
+#bucle de lista
+
+lasso.lista <- lapply(datos.train.lista,myfnlasso)
 #Se aplica a los datos de entrenamiento
-logisita.pred <- vector("list",length = length(datos.lista))
-#Se crea un vector del tamaño del vector lista
+
+lasso.pred <- vector("list",length = length(datos.lista))
+#Se crea un vector del tamaño del vector lista de ridge
 for(l in 1:length(datos.lista)){
   
-  logisita.pred[[l]] <- predict(logistica.lista[[l]],datos.test.lista[[l]])
+  lasso.pred[[l]] <- predict(lasso.lista[[l]],datos.test.lista[[l]])
   
   
 }
 #Se llena el for desde el primer valor hasta el numero total de los datos lista
-names(logisita.pred) <- names(datos.lista)
+names(lasso.pred) <- names(datos.lista)
 accuracy.lasso <- vector("numeric",length = length(datos.lista))
 
 for(l in 1:length(datos.lista)){
   
-  accuracy.lasso[l] <- confusionMatrix(datos.test.lista$raw$clase,logisita.pred[[l]])$overall[1]
+  accuracy.lasso[l] <- confusionMatrix(datos.test.lista$raw$clase,lasso.pred[[l]])$overall[1]
   
   
 }
 
 names(accuracy.lasso) <- names(datos.lista)
-
-### Este valor lo tienen que guardar solamente haremos por accuracy y kappa
-### tenemos que mirar el objeto matconf
-```
-
-```{r}
-set.seed(123456789)
-
-### para conjunto de datos podemos realizar el split
-### lasso 1 ridge 0
-datos.train.lista <- lapply(datos.lista, function(x) x[idx,])
-datos.test.lista <- lapply(datos.lista, function(x) x[-idx,])
-
-cvfit_lasso <- cv.glmnet(as.matrix(datos.train.lista$raw[,-ncol(datos)]),as.numeric(datos.train.lista$raw$clase),type.measure = "class",family="multinom", alpha = 0,nfolds = 4)
-
-print(accuracy.lasso)
 ```
 
