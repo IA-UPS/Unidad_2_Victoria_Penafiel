@@ -190,6 +190,7 @@ names(accuracy.regresion) <- names(datos.lista)
 
 ### Este valor lo tienen que guardar solamente haremos por accuracy y kappa
 ### tenemos que mirar el objeto matconf
+print(accuracy.regresion)
 
 ```
 
@@ -231,19 +232,6 @@ names(accuracy.ridge) <- names(datos.lista)
 
 ### Este valor lo tienen que guardar solamente haremos por accuracy y kappa
 ### tenemos que mirar el objeto matconf
-
-```
-
-```{r warning=F}
-set.seed(123456789)
-
-### para conjunto de datos podemos realizar el split
-### lasso 1 ridge 0
-datos.train.lista <- lapply(datos.lista, function(x) x[idx,])
-datos.test.lista <- lapply(datos.lista, function(x) x[-idx,])
-
-cvfit_lasso <- cv.glmnet(as.matrix(datos.train.lista$raw[,-ncol(datos)]),as.numeric(datos.train.lista$raw$clase),type.measure = "class",family="multinom", alpha = 0,nfolds = 4)
-
 print(accuracy.ridge)
 ```
 
@@ -281,5 +269,13 @@ for(l in 1:length(datos.lista)){
 }
 
 names(accuracy.lasso) <- names(datos.lista)
+print(accuracy.lasso)
+
+```
+
+
+KNN
+```{r}
+
 ```
 
