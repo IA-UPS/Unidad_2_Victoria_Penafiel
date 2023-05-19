@@ -274,8 +274,75 @@ print(accuracy.lasso)
 ```
 
 
-KNN
+###KNN
 ```{r}
+#cv es metodo de control
+set.seed(123456789) #Se necesita una semilla
+trControl <- trainControl(method = 'cv',
+                          number = 5)
+myfnlog <- function(x) train(clase ~ ., data = x, method = "multinom", trControl = trControl, trace = F)
+#multinom se pone para varios datos
+logistica.lista <- lapply(datos.train.lista,myfnlog)
+#Se aplica a los datos de entrenamiento
+logisita.pred <- vector("list",length = length(datos.lista))
+#Se crea un vector del tamaño del vector lista
+for(l in 1:length(datos.lista)){
+  
+  logisita.pred[[l]] <- predict(logistica.lista[[l]],datos.test.lista[[l]])
+  
+  
+}
+#Se llena el for desde el primer valor hasta el numero total de los datos lista
+names(logisita.pred) <- names(datos.lista)
+accuracy.regresion <- vector("numeric",length = length(datos.lista))
 
+for(l in 1:length(datos.lista)){
+  
+  accuracy.regresion[l] <- confusionMatrix(datos.test.lista$raw$clase,logisita.pred[[l]])$overall[1]
+  
+  
+}
+
+names(accuracy.regresion) <- names(datos.lista)
+
+### Este valor lo tienen que guardar solamente haremos por accuracy y kappa
+### tenemos que mirar el objeto matconf
+print(accuracy.regresion)
+
+```
+###Bayes
+```{r}
+#cv es metodo de control
+set.seed(123456789) #Se necesita una semilla
+trControl <- trainControl(method = 'cv',
+                          number = 5)
+myfnbayes <- function(x) train(clase ~ ., data = x, method = "naive_bayes", trControl = trControl)
+#multinom se cambia por naive_bayes 
+bayes.lista <- lapply(datos.train.lista,myfnbayes)
+#Se aplica a los datos de entrenamiento
+bayes.pred <- vector("list",length = length(datos.lista))
+#Se crea un vector del tamaño del vector lista
+for(l in 1:length(datos.lista)){
+  
+  bayes.pred[[l]] <- predict(bayes.lista[[l]],datos.test.lista[[l]])
+  
+  
+}
+#Se llena el for desde el primer valor hasta el numero total de los datos lista
+names(bayes.pred) <- names(datos.lista)
+accuracy.bayes <- vector("numeric",length = length(datos.lista))
+
+for(l in 1:length(datos.lista)){
+  
+  accuracy.bayes[l] <- confusionMatrix(datos.test.lista$raw$clase,bayes.pred[[l]])$overall[1]
+  
+  
+}
+
+names(accuracy.bayes) <- names(datos.lista)
+
+### Este valor lo tienen que guardar solamente haremos por accuracy y kappa
+### tenemos que mirar el objeto matconf
+print(accuracy.regresion)
 ```
 
