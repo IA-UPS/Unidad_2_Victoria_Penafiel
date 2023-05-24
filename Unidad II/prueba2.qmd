@@ -20,7 +20,7 @@ library(e1071) ## bayes
 
 ```
 
-## Cargamos datis
+## Cargamos datos
 
 ```{r}
 # quitamos la primera columna
@@ -150,7 +150,7 @@ datos.test.lista <- lapply(datos.lista, function(x) x[-idx,])
 
 ```
 
-### Ejemplo regresión logística
+### Regresión logística
 
 https://rstudio-pubs-static.s3.amazonaws.com/38437_18a39a6487134d67b5f5e0d47221ec8d.html
 
@@ -160,7 +160,7 @@ alpha=1 es lasso y 0 es ridge
 
 ```{r}
 #cv es metodo de control
-set.seed(123456789) #Se necesita una semilla
+set.seed(13102001) #Se necesita una semilla
 trControl <- trainControl(method = 'cv',
                           number = 5)
 myfnlog <- function(x) train(clase ~ ., data = x, method = "multinom", trControl = trControl, trace = F)
@@ -199,7 +199,7 @@ print(accuracy.regresion)
 ```{r warning=FALSE}
 #cv es metodo de control
 library(glmnet)
-set.seed(123456789) #Se necesita una semilla
+set.seed(13102001) #Se necesita una semilla
 trControl <- trainControl(method = 'cv',
                           number = 5)
 #entrenamiento de ridge
@@ -231,15 +231,16 @@ for(l in 1:length(datos.lista)){
 names(accuracy.ridge) <- names(datos.lista)
 
 ### Este valor lo tienen que guardar solamente haremos por accuracy y kappa
-### tenemos que mirar el objeto matconf
+##print para visualizar datos
 print(accuracy.ridge)
 ```
 
 ###Lasso
+
 ```{r warning=False}
 #cv es metodo de control
 library(glmnet)
-set.seed(123456789) #Se necesita una semilla
+set.seed(13102001) #Se necesita una semilla
 trControl <- trainControl(method = 'cv',
                           number = 5)
 #entrenamiento de ridge
@@ -273,47 +274,49 @@ print(accuracy.lasso)
 
 ```
 
-
 ###KNN
-```{r}
+
+```{r warning=FALSE}
 #cv es metodo de control
-set.seed(123456789) #Se necesita una semilla
-trControl <- trainControl(method = 'cv',
-                          number = 5)
-myfnlog <- function(x) train(clase ~ ., data = x, method = "multinom", trControl = trControl, trace = F)
-#multinom se pone para varios datos
-logistica.lista <- lapply(datos.train.lista,myfnlog)
+set.seed(13102001) #Se necesita una semilla
+k_values=c(1:20) #valor de k
+Ctrol <- trainControl(method = 'repeatedcv',
+                          number = 4, repeats = 15)
+myfnknn <- function(x) train(clase ~ ., data = x, method = "knn", trControl = Ctrol, tuneGrid = data.frame(k=k_values))
+#método knn
+knn.lista <- lapply(datos.train.lista,myfnknn)
 #Se aplica a los datos de entrenamiento
-logisita.pred <- vector("list",length = length(datos.lista))
+knn.pred <- vector("list",length = length(datos.lista))
 #Se crea un vector del tamaño del vector lista
 for(l in 1:length(datos.lista)){
   
-  logisita.pred[[l]] <- predict(logistica.lista[[l]],datos.test.lista[[l]])
+  knn.pred[[l]] <- predict(knn.lista[[l]],datos.test.lista[[l]])
   
   
 }
 #Se llena el for desde el primer valor hasta el numero total de los datos lista
-names(logisita.pred) <- names(datos.lista)
-accuracy.regresion <- vector("numeric",length = length(datos.lista))
+names(knn.pred) <- names(datos.lista)
+accuracy.knn <- vector("numeric",length = length(datos.lista))
 
 for(l in 1:length(datos.lista)){
   
-  accuracy.regresion[l] <- confusionMatrix(datos.test.lista$raw$clase,logisita.pred[[l]])$overall[1]
+  accuracy.knn[l] <- confusionMatrix(datos.test.lista$raw$clase,knn.pred[[l]])$overall[1]
   
   
 }
 
-names(accuracy.regresion) <- names(datos.lista)
+names(accuracy.knn) <- names(datos.lista)
 
-### Este valor lo tienen que guardar solamente haremos por accuracy y kappa
-### tenemos que mirar el objeto matconf
-print(accuracy.regresion)
+### Este valor lo tienen que guardar solamente haremos por accuracy
+print(accuracy.knn)
 
 ```
+
 ###Bayes
+
 ```{r}
 #cv es metodo de control
-set.seed(123456789) #Se necesita una semilla
+set.seed(13102001) #Se necesita una semilla
 trControl <- trainControl(method = 'cv',
                           number = 5)
 myfnbayes <- function(x) train(clase ~ ., data = x, method = "naive_bayes", trControl = trControl)
@@ -343,6 +346,15 @@ names(accuracy.bayes) <- names(datos.lista)
 
 ### Este valor lo tienen que guardar solamente haremos por accuracy y kappa
 ### tenemos que mirar el objeto matconf
-print(accuracy.regresion)
+print(accuracy.bayes)
+```
+###Matriz Final
+```{r}
+matriz <- rbind(accuracy.regresion, accuracy.ridge, accuracy.lasso, accuracy.knn, accuracy.bayes)
+print(matriz)
+```
+```{r}
+matriz <- cbind(accuracy.regresion, accuracy.ridge, accuracy.lasso, accuracy.knn, accuracy.bayes)
+print(matriz)
 ```
 
