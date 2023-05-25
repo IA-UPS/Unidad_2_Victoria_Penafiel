@@ -194,7 +194,7 @@ print(accuracy.regresion)
 
 ```
 
-###Ridge
+### Ridge
 
 ```{r warning=FALSE}
 #cv es metodo de control
@@ -235,9 +235,9 @@ names(accuracy.ridge) <- names(datos.lista)
 print(accuracy.ridge)
 ```
 
-###Lasso
+### Lasso
 
-```{r warning=False}
+```{r warning=FALSE}
 #cv es metodo de control
 library(glmnet)
 set.seed(13102001) #Se necesita una semilla
@@ -274,7 +274,7 @@ print(accuracy.lasso)
 
 ```
 
-###KNN
+### KNN
 
 ```{r warning=FALSE}
 #cv es metodo de control
@@ -312,7 +312,7 @@ print(accuracy.knn)
 
 ```
 
-###Bayes
+### Bayes
 
 ```{r}
 #cv es metodo de control
@@ -348,13 +348,15 @@ names(accuracy.bayes) <- names(datos.lista)
 ### tenemos que mirar el objeto matconf
 print(accuracy.bayes)
 ```
-###Matriz Final
+
+### Matriz Final
+
 ```{r}
 matriz <- rbind(accuracy.regresion, accuracy.ridge, accuracy.lasso, accuracy.knn, accuracy.bayes)
 print(matriz)
 ```
+
 ```{r}
 matriz <- cbind(accuracy.regresion, accuracy.ridge, accuracy.lasso, accuracy.knn, accuracy.bayes)
 print(matriz)
 ```
-
