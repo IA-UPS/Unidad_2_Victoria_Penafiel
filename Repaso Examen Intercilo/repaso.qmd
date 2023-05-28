@@ -2,7 +2,7 @@
 title: "Predicción de la diabetes "
 format: html
 editor: visual
-author: "Edmond Géraud"
+author: "Edmond Géraud, Victoria Peñafiel, Nelson Sarmiento"
 ---
 
 # Intro
