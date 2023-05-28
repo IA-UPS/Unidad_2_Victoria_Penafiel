@@ -1,0 +1,44 @@
+---
+title: "Resumen Redes Bayesianas"
+author: "Victoria Peñafiel y Nelson Sarmiento"
+format: html
+editor: visual
+---
+
+# Inteligencia Artificial
+
+**Integrantes:**
+
+-   Victoria Peñafiel
+
+-   Nelson Sarmiento
+
+**Fecha:**
+
+-   21 de mayo de 2023
+
+**Tema:**
+
+-   Resumen sobre Redes Bayesianas
+
+## Redes Bayesianas
+
+Las redes bayesianas son una forma de representar un fenómeno al utilizar un conjunto de variables y describir las relaciones de dependencia existentes entre ellas. Mediante este modelo, es posible realizar inferencia bayesiana, que consiste en estimar la probabilidad posterior de las variables desconocidas basándose en las variables conocidas. Estos modelos tienen diversas aplicaciones, como clasificación, predicción, diagnóstico, entre otros. Además, proporcionan información relevante sobre las relaciones entre las variables del dominio, que en ocasiones pueden interpretarse como relaciones de causa y efecto. Las redes bayesianas estructuran un problema al utilizar un conjunto de variables y establecer las relaciones de dependencia entre ellas.
+
+A partir de este modelo, es posible realizar inferencia bayesiana, que consiste en estimar la probabilidad posterior de las variables desconocidas basándose en las variables conocidas. Estos modelos bayesianos tienen diversas aplicaciones en diagnóstico, clasificación y toma de decisiones, proporcionando información valiosa sobre las relaciones entre las variables, las cuales pueden interpretarse como relaciones de causa y efecto.
+
+![ Fig 1. Ejemplo de Redes Bayesianas](Redes%20bayesianas.png "Fig 1. Ejemplo de Redes Bayesianas"){fig-alt="Fig 1. Ejemplo de Redes Bayesianas" fig-align="center" fig-env="Fig 1. Ejemplo de Redes Bayesianas"}
+
+Las redes bayesianas son construidas mediante el uso de conocimiento experto y la aplicación de varias técnicas para aprender a partir de los datos disponibles, lo que permite estructurar los parámetros asociados al modelo. Además, es posible compartir los conocimientos adquiridos a partir de los datos del caso de estudio. Las redes bayesianas son una forma gráfica de representar las dependencias para el razonamiento probabilístico. En este tipo de representación, los nodos representan variables aleatorias, mientras que los arcos indican las relaciones de dependencia directa entre estas variables.
+
+Una red bayesiana es una herramienta informática que permite crear diferentes modelos según el caso de estudio, basándose en la visión del diseñador y las condiciones del comportamiento de las variables. Esta herramienta destaca porque no solo permite un proceso de retroceso (backward), como en una operación financiera que se ha realizado en términos de riesgos operacionales, sino también un proceso de avance (forward), donde la red puede calcular las probabilidades de pérdida o ganancia utilizando la regla de Bayes.
+
+La estructura de un modelo bayesiano permite capturar las relaciones de dependencia entre los atributos de los datos estudiados, describiendo la distribución de probabilidad que rige un conjunto de variables mediante el cálculo de independencia condicional y probabilidades condicionales. De esta manera, las redes permiten especificar relaciones de independencia entre conjuntos de variables, convirtiéndose en una solución para abordar la independencia.
+
+![ Fig 2. Matrices de probabilidad en Redes Bayesianas](Redes%20bayesianas%202.png "Fig 2. Matrices de probabilidad en Redes Bayesianas"){fig-alt="Fig 2. Matrices de probabilidad en Redes Bayesianas" fig-align="center" fig-env="Fig 2. Matrices de probabilidad en Redes Bayesianas"}
+
+## **Bibliografía:**
+
+-   Sucar, L. E., & Tonantzintla, M. (2006). Redes bayesianas. *Aprendizaje Automático: conceptos básicos y avanzados*, *77*, 100.
+
+-   Lozano, M. R. (2011). El papel de las redes bayesianas en la toma de decisiones. *Recuperado de https://docplayer. es/13694103-El-papel-de-las-redesbayesianas-en-la-toma-de-decisiones-miller-rivera-lozano-miller-riveraurosario-edu-co. html*.
