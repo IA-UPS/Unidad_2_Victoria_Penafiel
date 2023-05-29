@@ -27,7 +27,7 @@ Las redes bayesianas son una forma de representar un fenómeno al utilizar un co
 
 A partir de este modelo, es posible realizar inferencia bayesiana, que consiste en estimar la probabilidad posterior de las variables desconocidas basándose en las variables conocidas. Estos modelos bayesianos tienen diversas aplicaciones en diagnóstico, clasificación y toma de decisiones, proporcionando información valiosa sobre las relaciones entre las variables, las cuales pueden interpretarse como relaciones de causa y efecto.
 
-![ Fig 1. Ejemplo de Redes Bayesianas](Redes%20bayesianas.png "Fig 1. Ejemplo de Redes Bayesianas"){fig-alt="Fig 1. Ejemplo de Redes Bayesianas" fig-align="center" fig-env="Fig 1. Ejemplo de Redes Bayesianas"}
+![Fig 1. Ejemplo de Redes Bayesianas](Redes%20bayesianas.png "Fig 1. Ejemplo de Redes Bayesianas"){fig-alt="Fig 1. Ejemplo de Redes Bayesianas" fig-align="center" fig-env="Fig 1. Ejemplo de Redes Bayesianas"}
 
 Las redes bayesianas son construidas mediante el uso de conocimiento experto y la aplicación de varias técnicas para aprender a partir de los datos disponibles, lo que permite estructurar los parámetros asociados al modelo. Además, es posible compartir los conocimientos adquiridos a partir de los datos del caso de estudio. Las redes bayesianas son una forma gráfica de representar las dependencias para el razonamiento probabilístico. En este tipo de representación, los nodos representan variables aleatorias, mientras que los arcos indican las relaciones de dependencia directa entre estas variables.
 
@@ -35,7 +35,7 @@ Una red bayesiana es una herramienta informática que permite crear diferentes m
 
 La estructura de un modelo bayesiano permite capturar las relaciones de dependencia entre los atributos de los datos estudiados, describiendo la distribución de probabilidad que rige un conjunto de variables mediante el cálculo de independencia condicional y probabilidades condicionales. De esta manera, las redes permiten especificar relaciones de independencia entre conjuntos de variables, convirtiéndose en una solución para abordar la independencia.
 
-![ Fig 2. Matrices de probabilidad en Redes Bayesianas](Redes%20bayesianas%202.png "Fig 2. Matrices de probabilidad en Redes Bayesianas"){fig-alt="Fig 2. Matrices de probabilidad en Redes Bayesianas" fig-align="center" fig-env="Fig 2. Matrices de probabilidad en Redes Bayesianas"}
+![Fig 2. Matrices de probabilidad en Redes Bayesianas](Redes%20bayesianas%202.png "Fig 2. Matrices de probabilidad en Redes Bayesianas"){fig-alt="Fig 2. Matrices de probabilidad en Redes Bayesianas" fig-align="center" fig-env="Fig 2. Matrices de probabilidad en Redes Bayesianas"}
 
 ## **Bibliografía:**
 
