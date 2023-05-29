@@ -1,0 +1,156 @@
+---
+title: "Análisis de un conjunto de datos"
+author: "Victoria Peñafiel y Nelson Sarmiento"
+format: html
+editor: visual
+---
+
+# Análisis de un conjunto de datos
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(caret)
+library(ggstatsplot)
+library(DescTools)
+library(ineq)
+library(corrplot)
+library(rstantools)
+```
+
+```{r}
+datos <- read.csv("./datos/accelerometer.csv")
+print(datos)
+```
+
+### Estadística Descriptiva
+
+```{r}
+maximo <- apply(datos, 2, max)
+print(maximo)
+```
+
+```{r}
+minimo <- apply(datos, 2, min)
+print(minimo)
+```
+
+```{r}
+mediana <- apply(datos, 2, median)
+print(mediana)
+```
+
+```{r}
+options(scipen = 999)
+media <- colMeans(datos, na.rm = FALSE)
+print(media)
+```
+
+```{r}
+moda <- apply(datos, 2, Mode)
+print(moda)
+```
+
+```{r}
+ran <- apply(datos, 2, Range)
+print(ran)
+```
+
+```{r}
+rango <- apply(datos, 2, range)
+print(rango)
+```
+
+```{r}
+varianza <- apply(datos, 2, var)
+print(varianza)
+```
+
+```{r}
+desviación_estandar <- apply(datos, 2, sd)
+print(desviación_estandar)
+```
+
+```{r}
+quartil <- apply(datos, 2, quantile)
+print(quartil)
+```
+
+```{r}
+frecuencia_absoluta <- apply(datos, 2, table)
+frecuencia_relativa <- apply(datos, 2, prop.table)
+```
+
+```{r}
+indice_gini <- Gini(frecuencia_relativa)
+print(indice_gini)
+```
+
+```{r}
+idg <- apply(frecuencia_relativa, 2, Gini)
+print(idg)
+```
+
+```{r}
+plot(Lc(idg), col= 'gold')
+```
+
+```{r}
+summary(datos)
+```
+
+### Estadística Descriptiva univariante inferencial
+
+```{r}
+datos_col <- datos [,c(1:5)]
+ggbetweenstats(datos_col, wconfid, y=pctid)
+```
+
+### Estadística Descriptiva Bivariante Inferencial
+
+```{r}
+round(cor(datos),2)
+```
+
+```{r}
+Matrz_Correlación <- cor(as.matrix(datos))
+print(Matrz_Correlación)
+```
+
+```{r}
+correlacion <- round(cor(datos),1)
+corrplot(correlacion, method = 'circle')
+```
+
+```{r}
+boxplot(datos, main="Comparación de datos", col = 'darkblue', border = 'red1')
+```
+
+```{r}
+pairs(datos, col ='purple2')
+```
+
+```{r}
+t_test <- t.test(datos$wconfid)
+t_test1  <- t.test(datos$pctid)
+t_test2  <- t.test(datos$x)
+t_test3  <- t.test(datos$y)
+t_test4  <- t.test(datos$z)
+lista  <- list(t_test, t_test1,t_test2,t_test3,t_test4)
+print(lista)
+```
+
+### Estadística Descriptiva Multivariante Inferencial PCA
+
+```{r}
+summary(datos)
+
+pca <- prcomp(datos[,1:5], scale. = FALSE)
+plotpca <- bind_cols(outcome=datos$x, pca$x)
+ggplot(plotpca, aes(PC1, PC2, color=outcome))+geom_point()
+```
+
+```{r}
+scree_plot <- summary(pca)$importance[2,]
+plot(scree_plot, type="b", xlab="Datos", ylab="Varianza")
+```
