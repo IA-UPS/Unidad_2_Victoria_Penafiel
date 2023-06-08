@@ -1,0 +1,302 @@
+---
+title: "Examen Interciclo"
+author: "Victoria Peñafiel"
+format: html
+editor: visual
+---
+
+# Examen Interciclo
+
+## Descripción del conjunto de datos
+
+### Siempre nos tenemos que familarizar con los datos:
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(caret)
+library(e1071)
+library(ggstatsplot)
+library(DescTools)
+library(glmnet)
+library(naivebayes)
+library(ineq)
+library(corrplot)
+library(ggpubr)
+library(reldist)
+library(GGally)
+library(Hmisc)
+library(PerformanceAnalytics)
+library(gmodels)
+library(MASS)
+```
+
+```{r}
+datos <- read.csv("./datos/cancer.csv")
+print (datos)
+```
+
+### Realizar una estadística descriptiva numérica de los datos
+
+```{r}
+dat <-datos [,-1]
+print(dat)
+```
+
+```{r}
+maximo <- apply(dat, 2, max)
+print(maximo)
+```
+
+```{r}
+minimo <- apply(dat, 2, min)
+print(minimo)
+```
+
+```{r}
+mediana <- apply(dat, 2, median)
+print(mediana)
+```
+
+```{r}
+options(scipen = 999)
+media <- colMeans(dat, na.rm = FALSE)
+print(media)
+```
+
+```{r}
+moda <- apply(dat, 2, Mode)
+print(moda)
+```
+
+```{r}
+ran <-apply(dat, 2, Range)
+rango <- apply(dat, 2, range)
+print(ran)
+
+```
+
+```{r}
+print(rango)
+```
+
+```{r}
+varianza <- apply(dat, 2, var) #sirve para ver la variabilidad de los datos de acuerdo a su media.
+print(varianza)
+```
+
+```{r}
+desviación_estandar <- apply(dat, 2, sd) #Se calcula la desviación estándar para observar como se disperasan los datos de acuerdo a una distribución de los mismos.
+print(desviación_estandar)
+```
+
+```{r}
+quartil <- apply(dat, 2, quantile)
+print(quartil)
+```
+
+```{r}
+frecuencia_absoluta <- apply(dat, 2, table)
+frecuencia_relativa <- apply(dat, 2, prop.table) #La frecuencia relativa se utiliza para generar y calcular el índice de Gini.
+```
+
+```{r}
+indice_de_gini <- Gini(frecuencia_relativa)
+print(indice_de_gini) #El indice de Gini se utiliza para generar el gráfico de la curva de Lorenz que visualiza la forma de distribución de los datos que se tiene.
+```
+
+```{r}
+idg <- apply(frecuencia_relativa, 2, Gini)
+print(idg)
+```
+
+```{r}
+plot(Lc(idg), 
+     col= 'darkorchid1')
+```
+
+```{r}
+summary(dat) #Resumen estadístico, podemos observar y comparar como con la función summary los datos que se sacaron paso por paso en la parte de arriba como son máximos, minímos, media, mediana, moda y quartiles, que en el caso del paso por paso nos mustran mas divisiones de los quartiles que en el resumen estadístico. Con los máximos observamos el mayor valor de cda una de las variables, al contrario que con los minímos encontramos el valor mas bajo de cada columna. La media encuentra el promedio de cada columna, la mediana organiza los datos de cada columna y sacar el valor que se encuentra en el medio de toda la lista, y la moda nos sirve para identificar el valor que más se repite en cda columna de cada variable.
+```
+
+### Realizar estadística descritptiva univariante inferencial para las 10 primeras columnas.
+
+```{r}
+datos_col <- datos [,c(1:10)]
+ggbetweenstats(datos_col, diagnostico, y=mean_simmetry)
+```
+
+### Realizar un gráfico de correlaciones
+
+```{r}
+round(cor(dat),2)
+```
+
+```{r}
+matriz_de_correlación <- cor(as.matrix(dat))
+print(matriz_de_correlación)
+```
+
+```{r}
+correlación <- round(cor(dat),1)
+corrplot(correlación, method = 'ellipse')
+```
+
+### Realizar un PCA sobre las 10 primeras variables
+
+#### PCA
+
+```{r}
+summary(datos)
+
+datosdia <- factor(datos$diagnostico, levels=c("M","B"),labels = c(1,2))
+datnum <- as.numeric(datosdia)
+datbi <- ifelse(datos$diagnostico == "M",1 ,0)
+pca <- prcomp(dat[,1:10], scale. = FALSE)
+plotpca <-bind_cols(outcome = datbi,pca$x)
+ggplot(plotpca, aes(PC1,PC2, color = outcome))+geom_point()
+```
+
+##### Scree plot
+
+```{r}
+scree_plot <- summary(pca)$importance[2,]
+plot(scree_plot, type="b",xlab="Datos Principales",ylab="Varianza")
+```
+
+##### Biplot
+
+```{r warning=FALSE}
+biplott <- biplot(pca, col=c("royalblue4","red1"), cex=0.5)
+```
+
+## Realizar una predicción del diagnóstico con Naive Bayes mediante el paquete e1071
+
+### Dividir el conjunto de datos en prueba y entrenamiento con la semilla de aleatorización set.seed(123456)
+
+```{r}
+set.seed(123456)
+partición <- as.data.frame(datos) 
+train <- sample(nrow(partición),size = nrow(datos)*0.7)
+
+dat.train <- partición[train,]
+dat.test <- partición[-train,]
+```
+
+### Entrenar y realizar la predicción del diagnóstico
+
+```{r warning=FALSE}
+set.seed(123456)
+bayes <- naiveBayes(diagnostico ~ ., data = dat.train, laplace=0)
+bayes.predicción <- predict(bayes,dat.test)
+```
+
+### Obtener la matriz de confusión. Obtener Accuracy, Specificity y Sensibility
+
+```{r}
+Matriz_Confusión <- table(bayes.predicción, dat.test$diagnostico)
+print(Matriz_Confusión)
+```
+
+```{r}
+Accuracy <- sum(diag(Matriz_Confusión))/sum(Matriz_Confusión)
+Specificityyy <- Matriz_Confusión [1,1]/(Matriz_Confusión [1,1]+Matriz_Confusión [1,2])
+Sensibility <- Matriz_Confusión [2,2]/ (Matriz_Confusión [2,2]+Matriz_Confusión [2,1])
+
+tabla <- cbind(Accuracy, Specificityyy, Sensibility)
+print(tabla)
+```
+
+## Realizar una extracción de las características más importantes.
+
+### Realizar una regresión logística regularizada de LASSO
+
+```{r}
+modelo_lasso <- cv.glmnet(x=as.matrix(dat.train[,-1]),y=dat.train$diagnostico, family= "binomial", alpha = 1)
+```
+
+### Entrenar y predecir el diagnóstico
+
+```{r}
+set.seed(123456)
+predicc <- predict(modelo_lasso,newx = as.matrix( dat.test[,-1]),s=0.001,type="response")
+rangol <- ifelse(predicc >= 0.5, 1, 0)
+```
+
+### Obtener la matriz de confusión, Obtener Accuracy, Specificity y Sensibility
+
+```{r}
+MatrizC <- table(rangol, dat.test$diagnostico)
+print(MatrizC)
+```
+
+```{r}
+accuracyy <- sum(diag(MatrizC))/sum(MatrizC)
+specificityy <- MatrizC [1,1]/(MatrizC [1,1]+ MatrizC [1,2])
+sensibilityy <- MatrizC [2,2]/ (MatrizC [2,2]+ MatrizC [2,1])
+
+tabla <- cbind(accuracyy, specificityy, sensibilityy)
+print(tabla)
+```
+
+## Realizar de nuevo NAIVE BAYES pero con las características encontradas en el paso anterior
+
+### Del paso anterior obtener los coeficientes que no son cero
+
+```{r}
+lambda=0.005
+coe <- coef(modelo_lasso, s=lambda)
+print(coe)
+
+cara_cero <- coe [coe !=0]
+print(cara_cero)
+```
+
+### De dichos coeficientes realizar el algoritmo de Naive Bayes
+
+```{r}
+dat_coe <-datos [,c(1,8,11,16,20,21,22,24,25,27,28,29)]
+print(dat_coe)
+```
+
+```{r}
+trainna <- sample(nrow(dat_coe), size=nrow(datos)*0.7)
+coe.train <- dat_coe [trainna,]
+coe.test <- dat_coe [-trainna,]
+```
+
+```{r}
+naive_modelo <- naiveBayes(diagnostico ~., data=dat_coe, laplace=0)
+```
+
+```{r}
+naive_predic <- predict(naive_modelo, coe.test)
+```
+
+```{r}
+Matriznb <- table(naive_predic, coe.test$diagnostico)
+print(Matriznb)
+```
+
+```{r}
+Accuracyy <- sum(diag(Matriznb))/sum(Matriznb)
+Specificityy <- Matriznb [1,1]/(Matriznb [1,1]+ Matriznb [1,2])
+Sensibilityy <- Matriznb [2,2]/ (Matriznb [2,2]+ Matriznb [2,1])
+
+tabla <- cbind(Accuracyy, Specificityy, Sensibilityy)
+print(tabla)
+```
+
+### ¿Ha mejorado la clasificación respecto al paso 2 ? 1. ¿Por qué ?
+
+Si mejoro la clasificación con respecto a los tres parámetros encontrados, tanto en Precisión, Especificidad y Sensibilidad, porque el modelo es más exacto y clasifica de mejor manera cada uno de los datos y variables, identificacando los falsos positivos, entregando una predicción más certera de todos los datos. Los valores de los tres parámetro del modelo de la pregunta 4 son mayores y más cercanos a 1 que los valores q entrego el modelo de la pregunta 2. La precisión del modelo demuestra que los datos fueron clasificados correctamente y sus predicciones son correctas, la especificidad a clasificado en un valor de 0.97 los falsos positivos, además de en estos datos tener un 0.94 se sensibilidad.
+
+El modelo de la pregunta cuatro clasifica de mejor manera la gran cantidad de valores y variables que entrega este conjunto de datos, adémas de procesarlos de manera mas eficiente y rápida, haciendo el que el computador no utilice demasiada memoria y corra el código.
+
+#### 2. ¿Es mejor o peor la regresión logística de lasso ?
+
+Para este tipo de datos la regresón logística de Lasso es mejor q la de Naive Bayes porque entrega valores tanto de precisión, especificidad, y sensibilidad mucho más exactos y cercanos o iguales a 1 que los valores para estos tres parámetros entregado por el modelo de Naive Bayes, se demuestra que Lasso realiza una mejor clasificación para los falsos negativos y falsos positivos que tienen este tipo de datos, que son características que provocan que un grupo de datos sea tomado como veridico o no, y se pueda tomar una decisión en para la utilización de estos datos.
+
+#### 3. Sin hacer KNN, por qué tendríamos un peor rendimiento ?
+
+El modelo tendra un rendimiento peor porque se debe primero ajustar las características de los datos para poder utilizar knn, con el riesgo que el total de los datos no soporte el modelo y corra el peligro de realizar un sobreajuste sobre los mismos, lo que provocaría una carga mayor en el computador y llegue a procesar todos los datos y arroje predicciones erroneas sobre los datos. Como en este caso son datos muy grandes y extensos es mejor utilizar Naive Bayes o Lasso porque procesan de mejor manera con menos cantidad de características que las que necesita Knn y ayuda a que el computador sea más rapido y no se gaste mucha memoria.
